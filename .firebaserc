@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "siegsesta": {
+      "hosting": {
+        "SiegsestaForm": [
+          "siegsesta"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "siegsesta"
+  }
+}
