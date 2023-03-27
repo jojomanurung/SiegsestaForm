@@ -39,7 +39,6 @@ export class FormsService {
 
   async submitPendaftaran(form: Pendaftaran) {
     const payload = form;
-    console.log(payload);
 
     const docRef = await addDoc(this.pendaftaranRef, payload);
     return docRef.id;
