@@ -31,11 +31,13 @@ export class FormsService {
     );
   }
 
-  submitPendaftaran(form: Pendaftaran) {
-    const payload = form;
-    console.log(payload);
+  async submitPendaftaran(form: Pendaftaran) {
+    // const payload = form;
+    // console.log(payload);
 
-    addDoc(this.pendaftaranRef, payload);
+    // const docRef = await addDoc(this.pendaftaranRef, payload);
+    // return docRef.id;
+    return 'GtIcVxLqVmsJgxhwH5Nk'
   }
 
 }

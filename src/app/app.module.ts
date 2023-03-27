@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { NgxBarcode6Module } from 'ngx-barcode6';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     MatCardModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxBarcode6Module
   ],
   providers: [],
   bootstrap: [AppComponent]

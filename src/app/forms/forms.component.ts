@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { defer, from, Subscription } from 'rxjs';
 import { FormsService } from './forms.service';
 import { KelasPerlombaan } from './kelas-perlombaan.model';
 import { Pendaftaran } from './pendaftaran.model';
 import { SelectionModel } from '@angular/cdk/collections';
+import * as JsBarcode from 'jsbarcode';
 
 @Component({
   selector: 'app-forms',
@@ -12,6 +13,7 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrls: ['./forms.component.css']
 })
 export class FormsComponent implements OnInit {
+  @ViewChild('noooohhh') noooohhh!: ElementRef;
 
   pendaftaranForm!: FormGroup;
   kelasPerlombaan!: KelasPerlombaan[];
@@ -19,11 +21,14 @@ export class FormsComponent implements OnInit {
 
   selection = new SelectionModel<string>(true, []);
 
+  barcode: string = '';
+
   constructor(private fs: FormsService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initPendaftaranForm();
     this.fetchKelas();
+    this.barcode = 'abc';
   }
 
   initPendaftaranForm() {
@@ -59,7 +64,23 @@ export class FormsComponent implements OnInit {
     const formVal = this.pendaftaranForm.value as Pendaftaran;
     formVal.class = this.selection.selected
     console.log('formVal', formVal);
-    // this.fs.submitPendaftaran(formVal)
+    this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe((resp) => {
+      console.log(resp);
+      this.barcode = resp;
+      JsBarcode(this.noooohhh.nativeElement, this.barcode);
+      const fileNameToDownload = 'image_qrcode';
+      const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
+      console.log(base64Img);
+      fetch(base64Img)
+      .then(res => res.blob())
+      .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileNameToDownload;
+            link.click();
+      })
+    })
   }
 
   checks($event:any) {
