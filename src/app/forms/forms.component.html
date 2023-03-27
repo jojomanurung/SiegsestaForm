@@ -7,67 +7,191 @@
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Nama Depan</mat-label>
-          <input matInput type="text" formControlName="firstName"/>
+          <input matInput type="text" formControlName="firstName" />
+          <mat-error
+            *ngIf="
+              form('firstName').invalid &&
+              form('firstName').hasError('required') &&
+              (form('firstName').dirty || form('firstName').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Nama Belakang</mat-label>
-          <input matInput type="text" formControlName="lastName"/>
+          <input matInput type="text" formControlName="lastName" />
+          <mat-error
+            *ngIf="
+              form('lastName').invalid &&
+              form('lastName').hasError('required') &&
+              (form('lastName').dirty || form('lastName').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>NIK Pembalap</mat-label>
-          <input matInput type="text" formControlName="nik"/>
+          <input
+            matInput
+            type="text"
+            formControlName="nik"
+            (keypress)="keyPress($event)"
+          />
+          <mat-error
+            *ngIf="
+              form('nik').invalid &&
+              form('nik').hasError('required') &&
+              (form('nik').dirty || form('nik').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Email</mat-label>
-          <input matInput type="text" formControlName="email"/>
+          <input matInput type="email" formControlName="email" />
+          <mat-hint>Pastikan email yang anda masukkan valid</mat-hint>
+          <mat-error
+            *ngIf="
+              form('email').invalid &&
+              form('email').hasError('required') &&
+              (form('email').dirty || form('email').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form('email').invalid &&
+              form('email').hasError('pattern') &&
+              (form('email').dirty || form('email').touched)
+            "
+            >Email tidak valid!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Telepon</mat-label>
-          <input matInput type="text" formControlName="phone"/>
+          <input
+            matInput
+            type="text"
+            formControlName="phone"
+            (keypress)="keyPress($event)"
+          />
+          <mat-error
+            *ngIf="
+              form('phone').invalid &&
+              form('phone').hasError('required') &&
+              (form('phone').dirty || form('phone').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form('phone').invalid &&
+              form('phone').hasError('minlength') &&
+              (form('phone').dirty || form('phone').touched)
+            "
+            >Nomor telpon invalid</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Tempat Lahir</mat-label>
-          <input matInput type="text" formControlName="placeOfBirth"/>
+          <input matInput type="text" formControlName="placeOfBirth" />
+          <mat-error
+            *ngIf="
+              form('placeOfBirth').invalid &&
+              form('placeOfBirth').hasError('required') &&
+              (form('placeOfBirth').dirty || form('placeOfBirth').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Tanggal Lahir</mat-label>
-          <input matInput type="text" formControlName="dateOfBirth"/>
+          <input matInput [matDatepicker]="datepicker" formControlName="dateOfBirth" />
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker>
+            <mat-datepicker-actions>
+              <button mat-button matDatepickerCancel>Cancel</button>
+              <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+            </mat-datepicker-actions>
+          </mat-datepicker>
+          <mat-error
+            *ngIf="
+              form('dateOfBirth').invalid &&
+              form('dateOfBirth').hasError('required') &&
+              (form('dateOfBirth').dirty || form('dateOfBirth').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="hidden md:block md:col-6"></div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Nama Team</mat-label>
-          <input matInput type="text" formControlName="team"/>
+          <input matInput type="text" formControlName="team" />
+          <mat-error
+            *ngIf="
+              form('team').invalid &&
+              form('team').hasError('required') &&
+              (form('team').dirty || form('team').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Kota</mat-label>
-          <input matInput type="text" formControlName="city"/>
+          <input matInput type="text" formControlName="city" />
+          <mat-error
+            *ngIf="
+              form('city').invalid &&
+              form('city').hasError('required') &&
+              (form('city').dirty || form('city').touched)
+            "
+            >Wajib diisi!</mat-error
+          >
         </mat-form-field>
       </div>
     </div>
     <div class="grid mx-3">
       <div class="col-12">
-        <h2>Kelas Perlombaan</h2>
+        <h2 class="mb-0">Kelas Perlombaan</h2>
+        <mat-error
+            *ngIf="
+              form('class').invalid &&
+              form('class').hasError('required') &&
+              (form('class').dirty || form('class').touched)
+            "
+            >Minimal pilih satu kelas!</mat-error
+          >
       </div>
       <div class="col-12">
         <div class="grid">
-          <div class="col-12 md:col-6" *ngFor="let kelas of kelasPerlombaan; index as i">
-            <mat-checkbox class="example-margin" color="primary" (click)="$event.stopPropagation()" [checked]="selection.isSelected(kelas.id)" (change)="$event ? selection.toggle(kelas.id) : null">{{ kelas?.name }}</mat-checkbox>
+          <div
+            class="col-12 md:col-6"
+            *ngFor="let kelas of kelasPerlombaan; index as i"
+          >
+            <mat-checkbox
+              class="example-margin"
+              color="primary"
+              (click)="$event.stopPropagation()"
+              [checked]="selection.isSelected(kelas.id)"
+              (change)="$event ? checkbox(kelas.id) : null"
+              >{{ kelas?.name }}</mat-checkbox
+            >
           </div>
         </div>
       </div>
@@ -78,16 +202,7 @@
       </div>
     </div>
   </form>
-  <div style="text-align:center">
-    <!-- <ngx-barcode6
-      [bc-format]="'CODE128'"
-      [bc-value]="barcode"
-      [bc-display-value]="true"
-      [bc-element-type]="'img'"
-      [bc-class]="'barcode-hid'"
-      #anyThing
-    >
-    </ngx-barcode6> -->
-    <img #noooohhh>
+  <div class="barcode-container">
+    <img #noooohhh />
   </div>
 </mat-card>

@@ -21,14 +21,11 @@ export class FormsComponent implements OnInit {
 
   selection = new SelectionModel<string>(true, []);
 
-  barcode: string = '';
-
   constructor(private fs: FormsService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initPendaftaranForm();
     this.fetchKelas();
-    this.barcode = 'abc';
   }
 
   initPendaftaranForm() {
@@ -39,11 +36,11 @@ export class FormsComponent implements OnInit {
         placeOfBirth: ['', Validators.required],
         dateOfBirth: ['', Validators.required],
         nik: ['', Validators.required],
-        phone: ['', Validators.required],
-        email: ['', Validators.required],
+        phone: ['', [Validators.required, Validators.minLength(11)]],
+        email: ['', [Validators.required, Validators.pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)]],
         city: ['', Validators.required],
         team: ['', Validators.required],
-        class: [null],
+        class: [null, Validators.required],
       }
     )
   }
@@ -54,32 +51,47 @@ export class FormsComponent implements OnInit {
     })
   }
 
+  keyPress(event: KeyboardEvent) {
+    const pattern = /[0-9\+\-\ ]/;
+    let inputChar = String.fromCharCode(event.charCode);
+    if (event.keyCode != 8 && !pattern.test(inputChar)) {
+      event.preventDefault();
+    }
+  }
+
+  checkbox(value: string) {
+    this.selection.toggle(value);
+    const formVal = this.form('class').patchValue(this.selection.selected);
+  }
+
+  form(name: string) {
+    return this.pendaftaranForm.controls[name];
+  }
+
   submit() {
-    console.log('Submit');
+    console.log('Submit', this.pendaftaranForm);
     const isFormValid = this.pendaftaranForm.valid;
     if (!isFormValid) {
       this.pendaftaranForm.markAllAsTouched();
       return
     }
     const formVal = this.pendaftaranForm.value as Pendaftaran;
-    formVal.class = this.selection.selected
     console.log('formVal', formVal);
     this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe((resp) => {
       console.log(resp);
-      this.barcode = resp;
-      JsBarcode(this.noooohhh.nativeElement, this.barcode);
+      JsBarcode(this.noooohhh.nativeElement, resp);
       const fileNameToDownload = 'image_qrcode';
       const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
       console.log(base64Img);
-      fetch(base64Img)
-      .then(res => res.blob())
-      .then((blob) => {
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = fileNameToDownload;
-            link.click();
-      })
+      // fetch(base64Img)
+      // .then(res => res.blob())
+      // .then((blob) => {
+      //       const url = window.URL.createObjectURL(blob);
+      //       const link = document.createElement('a');
+      //       link.href = url;
+      //       link.download = fileNameToDownload;
+      //       link.click();
+      // })
     })
   }
 
