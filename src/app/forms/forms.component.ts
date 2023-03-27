@@ -1,4 +1,10 @@
-import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { defer, from, Subscription } from 'rxjs';
 import { FormsService } from './forms.service';
@@ -6,18 +12,19 @@ import { KelasPerlombaan } from './kelas-perlombaan.model';
 import { Pendaftaran } from './pendaftaran.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import * as JsBarcode from 'jsbarcode';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
-  styleUrls: ['./forms.component.css']
+  styleUrls: ['./forms.component.css'],
 })
-export class FormsComponent implements OnInit {
+export class FormsComponent implements OnInit, OnDestroy {
   @ViewChild('noooohhh') noooohhh!: ElementRef;
 
   pendaftaranForm!: FormGroup;
   kelasPerlombaan!: KelasPerlombaan[];
-  subs!: Subscription
+  subs!: Subscription;
 
   selection = new SelectionModel<string>(true, []);
 
@@ -28,27 +35,35 @@ export class FormsComponent implements OnInit {
     this.fetchKelas();
   }
 
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
   initPendaftaranForm() {
-    this.pendaftaranForm = this.fb.group(
-      {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        placeOfBirth: ['', Validators.required],
-        dateOfBirth: ['', Validators.required],
-        nik: ['', Validators.required],
-        phone: ['', [Validators.required, Validators.minLength(11)]],
-        email: ['', [Validators.required, Validators.pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)]],
-        city: ['', Validators.required],
-        team: ['', Validators.required],
-        class: [null, Validators.required],
-      }
-    )
+    this.pendaftaranForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      placeOfBirth: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      nik: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.minLength(11)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/),
+        ],
+      ],
+      city: ['', Validators.required],
+      team: ['', Validators.required],
+      class: [null, Validators.required],
+    });
   }
 
   fetchKelas() {
     this.subs = this.fs.getKelasPerlombaan().subscribe((resp) => {
       this.kelasPerlombaan = resp;
-    })
+    });
   }
 
   keyPress(event: KeyboardEvent) {
@@ -61,7 +76,7 @@ export class FormsComponent implements OnInit {
 
   checkbox(value: string) {
     this.selection.toggle(value);
-    const formVal = this.form('class').patchValue(this.selection.selected);
+    this.form('class').patchValue(this.selection.selected);
   }
 
   form(name: string) {
@@ -69,33 +84,33 @@ export class FormsComponent implements OnInit {
   }
 
   submit() {
-    console.log('Submit', this.pendaftaranForm);
     const isFormValid = this.pendaftaranForm.valid;
     if (!isFormValid) {
       this.pendaftaranForm.markAllAsTouched();
-      return
+      return;
     }
     const formVal = this.pendaftaranForm.value as Pendaftaran;
-    console.log('formVal', formVal);
-    this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe((resp) => {
-      console.log(resp);
-      JsBarcode(this.noooohhh.nativeElement, resp);
-      const fileNameToDownload = 'image_qrcode';
-      const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
-      console.log(base64Img);
-      // fetch(base64Img)
-      // .then(res => res.blob())
-      // .then((blob) => {
-      //       const url = window.URL.createObjectURL(blob);
-      //       const link = document.createElement('a');
-      //       link.href = url;
-      //       link.download = fileNameToDownload;
-      //       link.click();
-      // })
-    })
-  }
+    formVal.dateOfBirth = moment(formVal.dateOfBirth).format('DD/MM/YYYY');
+    this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe(
+      (resp) => {
+        const id = resp;
+        JsBarcode(this.noooohhh.nativeElement, id);
+        const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
 
-  checks($event:any) {
-    console.log($event);
+        fetch(base64Img)
+          .then((res) => res.blob())
+          .then((blob) => {
+            this.subs = defer(() =>
+              from(this.fs.uploadBarcode(blob, id))
+            ).subscribe((resp) => {
+              const email = this.form('email').value;
+
+              this.subs = defer(() =>
+                from(this.fs.sendEmailPendaftaran(email, resp))
+              ).subscribe();
+            });
+          });
+      }
+    );
   }
 }
