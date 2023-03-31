@@ -1,5 +1,7 @@
+import { KelasPerlombaan } from "./kelas-perlombaan.model";
+
 export class Pendaftaran {
-  uid?: string;
+  id?: string;
   firstName: string;
   lastName: string;
   placeOfBirth: string;
@@ -9,10 +11,11 @@ export class Pendaftaran {
   phone: string;
   city: string;
   team: string;
-  class: string[];
+  class: KelasPerlombaan[];
+  registered: boolean;
 
   constructor(input: Pendaftaran) {
-    this.uid = input.uid;
+    this.id = input.id;
     this.firstName = input.firstName;
     this.lastName = input.lastName;
     this.placeOfBirth = input.placeOfBirth;
@@ -23,5 +26,6 @@ export class Pendaftaran {
     this.city = input.city;
     this.team = input.team;
     this.class = input.class;
+    this.registered = input.registered;
   }
 }

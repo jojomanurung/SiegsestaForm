@@ -50,13 +50,14 @@ export class FormsService {
     return getDownloadURL(fileRef);
   }
 
-  async sendEmailPendaftaran(to: string, barcode: any) {
+  async sendEmailPendaftaran(to: string, barcode: any, code: string) {
     const payload = {
       to: [to],
       template: {
         name: 'send_barcode',
         data: {
           bcImg: barcode,
+          bCode: code
         },
       },
     };

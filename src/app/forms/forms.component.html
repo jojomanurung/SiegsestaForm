@@ -118,14 +118,16 @@
       <div class="col md:col-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Tanggal Lahir</mat-label>
-          <input matInput [matDatepicker]="datepicker" formControlName="dateOfBirth" />
-          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
-          <mat-datepicker #datepicker>
-            <mat-datepicker-actions>
-              <button mat-button matDatepickerCancel>Cancel</button>
-              <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
-            </mat-datepicker-actions>
-          </mat-datepicker>
+          <input
+            matInput
+            [matDatepicker]="datepicker"
+            formControlName="dateOfBirth"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="datepicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #datepicker></mat-datepicker>
           <mat-error
             *ngIf="
               form('dateOfBirth').invalid &&
@@ -170,13 +172,13 @@
       <div class="col-12">
         <h2 class="mb-0">Kelas Perlombaan</h2>
         <mat-error
-            *ngIf="
-              form('class').invalid &&
-              form('class').hasError('required') &&
-              (form('class').dirty || form('class').touched)
-            "
-            >Minimal pilih satu kelas!</mat-error
-          >
+          *ngIf="
+            form('class').invalid &&
+            form('class').hasError('required') &&
+            (form('class').dirty || form('class').touched)
+          "
+          >Minimal pilih satu kelas!</mat-error
+        >
       </div>
       <div class="col-12">
         <div class="grid">
@@ -188,8 +190,8 @@
               class="example-margin"
               color="primary"
               (click)="$event.stopPropagation()"
-              [checked]="selection.isSelected(kelas.id)"
-              (change)="$event ? checkbox(kelas.id) : null"
+              [checked]="selection.isSelected(kelas)"
+              (change)="$event ? checkbox(kelas) : null"
               >{{ kelas?.name }}</mat-checkbox
             >
           </div>

@@ -13,6 +13,7 @@ import { Pendaftaran } from './pendaftaran.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import * as JsBarcode from 'jsbarcode';
 import * as moment from 'moment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-forms',
@@ -26,7 +27,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   kelasPerlombaan!: KelasPerlombaan[];
   subs!: Subscription;
 
-  selection = new SelectionModel<string>(true, []);
+  selection = new SelectionModel<KelasPerlombaan>(true, []);
 
   constructor(private fs: FormsService, private fb: FormBuilder) {}
 
@@ -57,6 +58,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       city: ['', Validators.required],
       team: ['', Validators.required],
       class: [null, Validators.required],
+      registered: [false],
     });
   }
 
@@ -74,7 +76,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkbox(value: string) {
+  checkbox(value: KelasPerlombaan) {
     this.selection.toggle(value);
     this.form('class').patchValue(this.selection.selected);
   }
@@ -91,26 +93,49 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
     const formVal = this.pendaftaranForm.value as Pendaftaran;
     formVal.dateOfBirth = moment(formVal.dateOfBirth).format('DD/MM/YYYY');
-    this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe(
-      (resp) => {
-        const id = resp;
-        JsBarcode(this.noooohhh.nativeElement, id);
-        // const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
-
-        // fetch(base64Img)
-        //   .then((res) => res.blob())
-        //   .then((blob) => {
-        //     this.subs = defer(() =>
-        //       from(this.fs.uploadBarcode(blob, id))
-        //     ).subscribe((resp) => {
-        //       const email = this.form('email').value;
-
-        //       this.subs = defer(() =>
-        //         from(this.fs.sendEmailPendaftaran(email, resp))
-        //       ).subscribe();
-        //     });
-        //   });
+    Swal.fire({
+      title: 'Kamu akan melakukan pendaftaran!',
+      icon: 'info',
+      confirmButtonText: 'Ya',
+      denyButtonText: 'Tidak',
+      showDenyButton: true,
+      allowEscapeKey: true
+    }).then((value) => {
+      if (value.isConfirmed) {
+        this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe(
+          (resp) => {
+            const id = resp;
+            JsBarcode(this.noooohhh.nativeElement, id);
+            const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
+    
+            fetch(base64Img)
+              .then((res) => res.blob())
+              .then((blob) => {
+                this.subs = defer(() =>
+                  from(this.fs.uploadBarcode(blob, id))
+                ).subscribe((resp) => {
+                  const email = this.form('email').value;
+    
+                  this.subs = defer(() =>
+                    from(this.fs.sendEmailPendaftaran(email, resp, id))
+                  ).subscribe(() => {
+                    Swal.fire({
+                      title: 'Anda sudah mendaftar!',
+                      icon: 'success',
+                      text: 'Kami telah mengirimkan barcode ke email anda. Silahkan cek email anda!',
+                      confirmButtonText: 'Ok'
+                    }).then(() => {
+                      this.pendaftaranForm.reset();
+                      this.selection.clear();
+                    })
+                  });
+                });
+              });
+          }
+        );
+      } else {
+        return
       }
-    );
+    })
   }
 }
