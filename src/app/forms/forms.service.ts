@@ -3,7 +3,9 @@ import {
   addDoc,
   collection,
   collectionSnapshots,
+  doc,
   Firestore,
+  setDoc,
 } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { KelasPerlombaan } from './kelas-perlombaan.model';
@@ -37,11 +39,11 @@ export class FormsService {
     );
   }
 
-  async submitPendaftaran(form: Pendaftaran) {
+  async submitPendaftaran(id: string, form: Pendaftaran) {
     const payload = form;
 
-    const docRef = await addDoc(this.pendaftaranRef, payload);
-    return docRef.id;
+    const docRef = await setDoc(doc(this.pendaftaranRef, id), payload);
+    return docRef
   }
 
   async uploadBarcode(blob: any, name: string) {

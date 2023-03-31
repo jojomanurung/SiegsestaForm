@@ -102,9 +102,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       allowEscapeKey: true
     }).then((value) => {
       if (value.isConfirmed) {
-        this.subs = defer(() => from(this.fs.submitPendaftaran(formVal))).subscribe(
+        const id = Math.floor(1000000000000 + Math.random() * 9000000000000).toString();
+        this.subs = defer(() => from(this.fs.submitPendaftaran(id, formVal))).subscribe(
           (resp) => {
-            const id = resp;
             JsBarcode(this.noooohhh.nativeElement, id);
             const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
     
