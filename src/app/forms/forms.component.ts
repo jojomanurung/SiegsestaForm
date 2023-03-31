@@ -95,21 +95,21 @@ export class FormsComponent implements OnInit, OnDestroy {
       (resp) => {
         const id = resp;
         JsBarcode(this.noooohhh.nativeElement, id);
-        const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
+        // const base64Img = (this.noooohhh.nativeElement as HTMLImageElement).src;
 
-        fetch(base64Img)
-          .then((res) => res.blob())
-          .then((blob) => {
-            this.subs = defer(() =>
-              from(this.fs.uploadBarcode(blob, id))
-            ).subscribe((resp) => {
-              const email = this.form('email').value;
+        // fetch(base64Img)
+        //   .then((res) => res.blob())
+        //   .then((blob) => {
+        //     this.subs = defer(() =>
+        //       from(this.fs.uploadBarcode(blob, id))
+        //     ).subscribe((resp) => {
+        //       const email = this.form('email').value;
 
-              this.subs = defer(() =>
-                from(this.fs.sendEmailPendaftaran(email, resp))
-              ).subscribe();
-            });
-          });
+        //       this.subs = defer(() =>
+        //         from(this.fs.sendEmailPendaftaran(email, resp))
+        //       ).subscribe();
+        //     });
+        //   });
       }
     );
   }
