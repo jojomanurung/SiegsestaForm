@@ -13,6 +13,7 @@ export class Pendaftaran {
   team: string;
   class: KelasPerlombaan[];
   registered: boolean;
+  timestamp?: any;
 
   constructor(input: Pendaftaran) {
     this.id = input.id;
@@ -27,5 +28,6 @@ export class Pendaftaran {
     this.team = input.team;
     this.class = input.class;
     this.registered = input.registered;
+    this.timestamp = input.timestamp;
   }
 }

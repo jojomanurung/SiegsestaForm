@@ -5,6 +5,7 @@ import {
   collectionSnapshots,
   doc,
   Firestore,
+  serverTimestamp,
   setDoc,
 } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
@@ -41,6 +42,7 @@ export class FormsService {
 
   async submitPendaftaran(id: string, form: Pendaftaran) {
     const payload = form;
+    payload.timestamp = serverTimestamp();
 
     const docRef = await setDoc(doc(this.pendaftaranRef, id), payload);
     return docRef
